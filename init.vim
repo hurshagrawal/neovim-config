@@ -1,13 +1,16 @@
+" Neovim init.vim
+
 " Specify a directory for plugins (for Neovim: ~/.local/share/nvim/plugged)
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'icymind/NeoSolarized'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'weynhamz/vim-plugin-minibufexpl'
 Plug 'neomake/neomake'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdcommenter'
-Plug 'tpope/vim-vinegar'
+Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'digitaltoad/vim-pug'
@@ -35,12 +38,12 @@ set background=dark
 let g:neosolarized_contrast = "low"
 let g:neosolarized_visibility = "normal"
 let g:neosolarized_italic = 0
+let g:airline_theme='solarized'
 
 " Map the leader key to SPACE
-let mapleader='\'
+let mapleader = "\<Space>"
 
 " ---Key mappings---
-
 " Exit insert mode
 imap jk <Esc>
 
@@ -49,6 +52,7 @@ nnoremap <silent> k gk
 nnoremap <silent> j gj
 
 map ; :
+map <M-s> :w<CR>
 
 " Turn off accidental lowercasing
 vnoremap u y
@@ -58,15 +62,53 @@ vnoremap U y
 nnoremap <C-q> Q
 nnoremap Q q
 
+" Copy to clipboard
+vnoremap  <Leader>y  "+y
+nnoremap  <Leader>Y  "+yg_
+nnoremap  <Leader>y  "+y
+nnoremap  <Leader>yy  "+yy
+
+" Paste from clipboard
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+vnoremap <Leader>p "+p
+vnoremap <Leader>P "+P
+
+" Other leader commands
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>o :CtrlP<CR>
+
+"No arrow keys bro
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+imap <up> <nop>
+imap <down> <nop>
+imap <left> <nop>
+imap <right> <nop>
+
+nnoremap <silent> Y y$
+nnoremap <silent> R v$hp
+nnoremap <silent> <C-y> ggyy<C-o>
+
+map <C-t> :NERDTree<CR>
+
+" Ack
+map <C-a> :Ack
+map <C-m> :cn<CR>
+map <C-n> :cp<CR>
+
 " Splits
 map <C-\> :vsp<CR>
 map <C-]> :sp<CR>
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
 set winwidth=80
-set winminwidth=10
+set winminwidth=15
 " We have to have a winheight bigger than we want to set winminheight. But if
 " we set winheight to be huge before winminheight, the winminheight set will
 " fail.
@@ -141,22 +183,42 @@ au FocusLost * silent! wa
 " Auto save buffers when you switch context
 set autowriteall
 
-"No arrow keys bro
-map <up> <nop>
-map <down> <nop>
-map <left> <nop>
-map <right> <nop>
-imap <up> <nop>
-imap <down> <nop>
-imap <left> <nop>
-imap <right> <nop>
+" Remove search highlighting with esc
+nnoremap <silent> <esc> :noh<CR><esc>
 
-nnoremap <silent> Y y$
-nnoremap <silent> R v$hp
-nnoremap <silent> <C-y> ggyy<C-o>
+" Remember last buffer position
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 
-" TODO
-" remember last position in file
-" airline colors
-" configure plugins
-" figure out why italics is crap
+" Indent guides
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_exclude_filetypes = ['help']
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg='#00333e' ctermbg=3
+
+" Set HTML indenting and zencoding
+filetype indent on
+set filetype=html           " abbrev -  :set ft=html
+set smartindent             " abbrev -  :set si
+
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+let g:user_emmet_leader_key='<C-e>'
+
+" Turn on rainbow parens
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
+" CtrlP
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlPCurWD'
+let g:ctrlp_working_path_mode = 'a'
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|dump|map|log|jpg|ico|png|gif)$'
+let g:ctrlp_max_files = 0
+"let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
+
