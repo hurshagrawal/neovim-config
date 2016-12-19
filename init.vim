@@ -107,7 +107,7 @@ nnoremap <C-l> <C-w>l
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 set winwidth=80
-set winminwidth=10
+set winminwidth=20
 " We have to have a winheight bigger than we want to set winminheight. But if
 " we set winheight to be huge before winminheight, the winminheight set will
 " fail.
@@ -225,4 +225,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.
 autocmd! BufWritePost * Neomake
 let g:neomake_open_list = 2
 let g:neomake_typescript_enabled_makers = ['tsc']
+
+" NERDTree
+let g:NERDTreeWinSize = 30
 
