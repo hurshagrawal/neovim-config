@@ -6,7 +6,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'icymind/NeoSolarized'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'weynhamz/vim-plugin-minibufexpl'
 Plug 'neomake/neomake'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdcommenter'
@@ -108,7 +107,7 @@ nnoremap <C-l> <C-w>l
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 set winwidth=80
-set winminwidth=15
+set winminwidth=10
 " We have to have a winheight bigger than we want to set winminheight. But if
 " we set winheight to be huge before winminheight, the winminheight set will
 " fail.
@@ -221,4 +220,9 @@ let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|dump|map|log|jpg|ico|png|gif)$'
 let g:ctrlp_max_files = 0
 "let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
+
+" Run NeoMake on all buffer writes
+autocmd! BufWritePost * Neomake
+let g:neomake_open_list = 2
+let g:neomake_typescript_enabled_makers = ['tsc']
 
