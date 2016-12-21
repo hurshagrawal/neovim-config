@@ -16,7 +16,7 @@ Plug 'digitaltoad/vim-pug'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'fatih/vim-go'
-Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'Quramy/vim-js-pretty-template'
 Plug 'jason0x43/vim-js-indent'
 Plug 'mattn/emmet-vim'
@@ -38,6 +38,12 @@ let g:neosolarized_contrast = "low"
 let g:neosolarized_visibility = "normal"
 let g:neosolarized_italic = 0
 let g:airline_theme='solarized'
+
+" GUI Options
+if has("gui_vimr")
+  set termguicolors
+  set title
+endif
 
 " Map the leader key to SPACE
 let mapleader = "\<Space>"
@@ -138,12 +144,34 @@ set nojoinspaces        " Prevents inserting two spaces after punctuation on a j
 set splitbelow          " Horizontal split below current.
 set splitright          " Vertical split to right of current.
 
+"no backup and swap sucks
+set nobackup
+set noswapfile
+
+" Set HTML indenting and zencoding
+filetype indent on
+set filetype=html
+set autoindent
+set smartindent
+
+" Case insensitive searching
+set ignorecase
+set smartcase
+
  "Tab completion
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.svn,vendor/gems/*
 
 " Autocomplete on dashes
 set iskeyword+=-
+
+" Undo history between sessions
+set undofile
+set undodir=~/.config/nvim/undodir
+
+" Save folds when you exit file, then reload when opening it again
+au BufWinLeave *.* mkview
+au BufWinEnter *.* loadview
 
 if !&scrolloff
   set scrolloff=3       " Show next 3 lines while scrolling.
@@ -172,10 +200,6 @@ syntax enable
 :map <MiddleMouse> <Nop>
 :imap <MiddleMouse> <Nop>
 
-"no backup and swap sucks
-set nobackup
-set noswapfile
-
 " Auto save buffers whenever you lose focus
 au FocusLost * silent! wa
 
@@ -196,11 +220,7 @@ let g:indent_guides_exclude_filetypes = ['help']
 let g:indent_guides_auto_colors = 0
 autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg='#00333e' ctermbg=3
 
-" Set HTML indenting and zencoding
-filetype indent on
-set filetype=html           " abbrev -  :set ft=html
-set smartindent             " abbrev -  :set si
-
+" Zencoding
 let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
@@ -221,8 +241,8 @@ let g:ctrlp_max_files = 0
 "let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
 
-" Run NeoMake on all buffer writes
-autocmd! BufWritePost * Neomake
+" Run NeoMake on TS writes
+au BufWritePost *.ts Neomake
 let g:neomake_open_list = 2
 let g:neomake_typescript_enabled_makers = ['tsc']
 
