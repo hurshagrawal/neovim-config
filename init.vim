@@ -172,10 +172,6 @@ set iskeyword+=-
 set undofile
 set undodir=~/.config/nvim/undodir
 
-" Save folds when you exit file, then reload when opening it again
-au BufWinLeave *.* mkview
-au BufWinEnter *.* silent! loadview
-
 if !&scrolloff
   set scrolloff=3       " Show next 3 lines while scrolling.
 endif
