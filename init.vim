@@ -13,19 +13,22 @@ Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'digitaltoad/vim-pug'
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
-Plug 'fatih/vim-go'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'Quramy/vim-js-pretty-template'
-Plug 'jason0x43/vim-js-indent'
 Plug 'mattn/emmet-vim'
 Plug 'ervandew/supertab'
 Plug 'nathanaelkane/vim-indent-guides'
-Plug 'kien/rainbow_parentheses.vim'
 Plug 'mileszs/ack.vim'
 Plug 'vim-scripts/BufOnly.vim'
-Plug 'Raimondi/delimitMate'
+
+Plug 'fatih/vim-go', { 'for': ['go', 'golang'] }
+
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] }
+
+Plug 'Shougo/vimproc.vim', { 'do' : 'make', 'for': ['typescript', 'typescript.tsx'] }
+Plug 'Quramy/tsuquyomi', { 'for': ['typescript', 'typescript.tsx'] }
+Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
+Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
 
 " Initialize plugin system
 call plug#end()
@@ -171,7 +174,7 @@ set undodir=~/.config/nvim/undodir
 
 " Save folds when you exit file, then reload when opening it again
 au BufWinLeave *.* mkview
-au BufWinEnter *.* loadview
+au BufWinEnter *.* silent! loadview
 
 if !&scrolloff
   set scrolloff=3       " Show next 3 lines while scrolling.
@@ -225,12 +228,6 @@ let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
 
-" Turn on rainbow parens
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-
 " CtrlP
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 let g:ctrlp_map = '<c-p>'
@@ -242,7 +239,7 @@ let g:ctrlp_max_files = 0
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
 
 " Run NeoMake on TS writes
-au BufWritePost *.ts Neomake
+au BufWritePost *.ts,*.tsx Neomake
 let g:neomake_open_list = 2
 let g:neomake_typescript_enabled_makers = ['tsc']
 
