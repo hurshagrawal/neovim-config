@@ -4,10 +4,11 @@
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'icymind/NeoSolarized'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
 Plug 'neomake/neomake'
-Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-fugitive'
@@ -21,13 +22,12 @@ Plug 'vim-scripts/BufOnly.vim'
 
 Plug 'fatih/vim-go', { 'for': ['go', 'golang'] }
 
-Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'othree/yajs.vim', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] }
 
 Plug 'Shougo/vimproc.vim', { 'do' : 'make', 'for': ['typescript', 'typescript.tsx'] }
-Plug 'Quramy/tsuquyomi', { 'for': ['typescript', 'typescript.tsx'] }
-Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
+Plug 'leafgarland/typescript-vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
 
 " Initialize plugin system
@@ -96,6 +96,12 @@ imap <up> <nop>
 imap <down> <nop>
 imap <left> <nop>
 imap <right> <nop>
+
+" Get rid of annoying shift commands
+map <S-down> <nop> 
+map <S-up> <nop> 
+imap <S-down> <nop> 
+imap <S-up> <nop> 
 
 nnoremap <silent> Y y$
 nnoremap <silent> R v$hp
@@ -190,7 +196,10 @@ highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
 match ExtraWhitespace /\s\+$\|\t/
 
 " Color Column
-set colorcolumn=80
+highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+match OverLength /\%81v.\+/
+"set colorcolumn=80
+"hi ColorColumn guibg=#042028
 
 " Default color scheme
 syntax enable
@@ -225,14 +234,36 @@ autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
 
 " CtrlP
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlPCurWD'
-let g:ctrlp_working_path_mode = 'a'
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|dump|map|log|jpg|ico|png|gif)$'
-let g:ctrlp_max_files = 0
-"let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
+"set runtimepath^=~/.vim/bundle/ctrlp.vim
+"let g:ctrlp_map = '<c-p>'
+"let g:ctrlp_cmd = 'CtrlPCurWD'
+"let g:ctrlp_working_path_mode = 'a'
+"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|dump|map|log|jpg|ico|png|gif)$'
+"let g:ctrlp_max_files = 0
+""let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+"set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
+
+" FZF
+let $FZF_DEFAULT_COMMAND .= 'ag -g ""'
+:map <c-p> :FZF<CR>
+
+" - down / up / left / right
+let g:fzf_layout = { 'down': '~25%' }
+
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 " Run NeoMake on TS writes
 au BufWritePost *.ts,*.tsx Neomake
