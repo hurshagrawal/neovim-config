@@ -7,7 +7,6 @@ Plug 'icymind/NeoSolarized'
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 Plug 'neomake/neomake'
-" Plug 'ctrlpvim/ctrlp.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
@@ -85,7 +84,6 @@ vnoremap <Leader>P "+P
 " Other leader commands
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
-nnoremap <Leader>o :CtrlP<CR>
 
 "No arrow keys bro
 map <up> <nop>
@@ -233,19 +231,10 @@ let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
 
-" CtrlP
-"set runtimepath^=~/.vim/bundle/ctrlp.vim
-"let g:ctrlp_map = '<c-p>'
-"let g:ctrlp_cmd = 'CtrlPCurWD'
-"let g:ctrlp_working_path_mode = 'a'
-"let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn|dump|map|log|jpg|ico|png|gif)$'
-"let g:ctrlp_max_files = 0
-""let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
-"set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*/source_maps/*,*/link_infos/*,*.log,*.dump,*/node_modules/*
-
 " FZF
 let $FZF_DEFAULT_COMMAND .= 'ag -g ""'
 :map <c-p> :FZF<CR>
+nnoremap <Leader>o :FZF<CR>
 
 " - down / up / left / right
 let g:fzf_layout = { 'down': '~25%' }
