@@ -4,9 +4,8 @@
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'icymind/NeoSolarized'
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
-Plug 'neomake/neomake'
+Plug 'itchyny/lightline.vim'
+Plug 'w0rp/ale'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
@@ -25,7 +24,6 @@ Plug 'othree/yajs.vim', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] }
 
-Plug 'Shougo/vimproc.vim', { 'do' : 'make', 'for': ['typescript', 'typescript.tsx'] }
 Plug 'leafgarland/typescript-vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
 
@@ -33,13 +31,11 @@ Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
 call plug#end()
 
 " Solarized
-set termguicolors
 colorscheme NeoSolarized
 set background=dark
-let g:neosolarized_contrast = "low"
+" let g:neosolarized_contrast = "low"
 let g:neosolarized_visibility = "normal"
 let g:neosolarized_italic = 0
-let g:airline_theme='solarized'
 
 " GUI Options
 if has("gui_vimr")
@@ -105,7 +101,7 @@ nnoremap <silent> Y y$
 nnoremap <silent> R v$hp
 nnoremap <silent> <C-y> ggyy<C-o>
 
-map <C-t> :NERDTree<CR>
+map <C-t> :NERDTreeToggle<CR>
 
 " Ack
 map <C-a> :Ack
@@ -142,8 +138,7 @@ set shiftwidth=2        " Indentation amount for < and > commands.
 set smarttab
 
 set noerrorbells        " No beeps.
-set modeline            " Enable modeline.
-set esckeys             " Cursor keys in insert mode.
+set noshowmode          " No status line
 set linespace=0         " Set line-spacing to minimum.
 set nojoinspaces        " Prevents inserting two spaces after punctuation on a join (J)
 
@@ -203,8 +198,8 @@ match OverLength /\%81v.\+/
 syntax enable
 
 " No middleclick paste
-:map <MiddleMouse> <Nop>
-:imap <MiddleMouse> <Nop>
+map <MiddleMouse> <Nop>
+imap <MiddleMouse> <Nop>
 
 " Auto save buffers whenever you lose focus
 au FocusLost * silent! wa
@@ -215,6 +210,9 @@ set autowriteall
 " Remove search highlighting with esc
 nnoremap <silent> <esc> :noh<CR><esc>
 
+" Enable mouse support
+set mouse=a
+
 " Remember last buffer position
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -224,16 +222,21 @@ endif
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_exclude_filetypes = ['help']
 let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg='#00333e' ctermbg=3
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg='#00333e' ctermbg=3
 
 " Zencoding
 let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 let g:user_emmet_leader_key='<C-e>'
 
+" Ack should use ag
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+
 " FZF
 let $FZF_DEFAULT_COMMAND .= 'ag -g ""'
-:map <c-p> :FZF<CR>
+map <c-p> :FZF<CR>
 nnoremap <Leader>o :FZF<CR>
 
 " - down / up / left / right
@@ -254,11 +257,61 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 
-" Run NeoMake on TS writes
-au BufWritePost *.ts,*.tsx Neomake
-let g:neomake_open_list = 2
-let g:neomake_typescript_enabled_makers = ['tsc']
-
 " NERDTree
 let g:NERDTreeWinSize = 30
 
+" Ale
+let g:ale_completion_enabled = 1
+let g:ale_sign_error = '»'
+let g:ale_sign_warning = '›'
+
+" Liteline Ale Support
+"
+" This is regular lightline configuration, we just added
+" 'linter_warnings', 'linter_errors' and 'linter_ok' to
+" the active right panel. Feel free to move it anywhere.
+" `component_expand' and `component_type' are required.
+"
+" For more info on how this works, see lightline documentation.
+let g:lightline = {
+      \ 'active': {
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'linter_warnings', 'linter_errors', 'linter_ok' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
+      \ },
+      \ 'component_expand': {
+      \   'linter_warnings': 'LightlineLinterWarnings',
+      \   'linter_errors': 'LightlineLinterErrors',
+      \   'linter_ok': 'LightlineLinterOK'
+      \ },
+      \ 'component_type': {
+      \   'linter_warnings': 'warning',
+      \   'linter_errors': 'error',
+      \   'linter_ok': 'ok'
+      \ },
+      \ }
+
+autocmd User ALELint call lightline#update()
+
+" ale + liteline
+function! LightlineLinterWarnings() abort
+  let l:counts = ale#statusline#Count(bufnr(''))
+  let l:all_errors = l:counts.error + l:counts.style_error
+  let l:all_non_errors = l:counts.total - l:all_errors
+  return l:counts.total == 0 ? '' : printf('› %d', all_non_errors)
+endfunction
+
+function! LightlineLinterErrors() abort
+  let l:counts = ale#statusline#Count(bufnr(''))
+  let l:all_errors = l:counts.error + l:counts.style_error
+  let l:all_non_errors = l:counts.total - l:all_errors
+  return l:counts.total == 0 ? '' : printf('» %d', all_errors)
+endfunction
+
+function! LightlineLinterOK() abort
+  let l:counts = ale#statusline#Count(bufnr(''))
+  let l:all_errors = l:counts.error + l:counts.style_error
+  let l:all_non_errors = l:counts.total - l:all_errors
+  return l:counts.total == 0 ? '✓' : ''
+endfunction
