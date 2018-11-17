@@ -17,6 +17,12 @@ Plug 'ervandew/supertab'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'mileszs/ack.vim'
 Plug 'vim-scripts/BufOnly.vim'
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-endwise'
+Plug 'tpope/vim-fugitive'
+Plug 'hashivim/vim-terraform'
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'zxqfl/tabnine-vim'
 
 Plug 'fatih/vim-go', { 'for': ['go', 'golang'] }
 
@@ -57,6 +63,9 @@ nnoremap <silent> j gj
 map ; :
 map <M-s> :w<CR>
 
+nnoremap <silent> ∆ 10gj
+nnoremap <silent> ˚ 10gk
+
 " Turn off accidental lowercasing
 vnoremap u y
 vnoremap U y
@@ -64,6 +73,11 @@ vnoremap U y
 " Change ex-mode keybinding
 nnoremap <C-q> Q
 nnoremap Q q
+
+" Tabs
+nnoremap  <Leader>t :tabnew<CR>
+nnoremap  <Leader>h :tabprevious<CR>
+nnoremap  <Leader>l :tabnext<CR>
 
 " Copy to clipboard
 vnoremap  <Leader>y  "+y
@@ -102,9 +116,11 @@ nnoremap <silent> R v$hp
 nnoremap <silent> <C-y> ggyy<C-o>
 
 map <C-t> :NERDTreeToggle<CR>
+map <C-e> :NERDTreeFind<CR>
+
+map <C-a> :ALEDetail<CR>
 
 " Ack
-map <C-a> :Ack
 map <C-m> :cn<CR>
 map <C-n> :cp<CR>
 
@@ -218,6 +234,9 @@ if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
+" Supertab should tab properly
+let g:SuperTabDefaultCompletionType = "<c-n>"
+
 " Indent guides
 let g:indent_guides_enable_on_vim_startup = 1
 let g:indent_guides_exclude_filetypes = ['help']
@@ -235,7 +254,7 @@ if executable('ag')
 endif
 
 " FZF
-let $FZF_DEFAULT_COMMAND .= 'ag -g ""'
+let $FZF_DEFAULT_COMMAND .= 'ag --hidden --ignore .git -g ""'
 map <c-p> :FZF<CR>
 nnoremap <Leader>o :FZF<CR>
 
@@ -259,11 +278,27 @@ let g:fzf_colors =
 
 " NERDTree
 let g:NERDTreeWinSize = 30
+let NERDTreeShowHidden=1
+
+" NERDCommenter
+let g:NERDSpaceDelims = 1
 
 " Ale
 let g:ale_completion_enabled = 1
 let g:ale_sign_error = '»'
 let g:ale_sign_warning = '›'
+
+let g:ale_fixers = {
+\   'javascript': ['eslint', 'prettier'],
+\   'typescript': ['tslint', 'prettier'],
+\}
+
+let g:ale_javascript_prettier_use_local_config = 1
+let g:ale_typescript_prettier_use_local_config = 1
+
+" Set this setting in vimrc if you want to fix files automatically on save.
+" This is off by default.
+let g:ale_fix_on_save = 1
 
 " Liteline Ale Support
 "
@@ -278,7 +313,13 @@ let g:lightline = {
       \   'right': [ [ 'lineinfo' ],
       \              [ 'percent' ],
       \              [ 'linter_warnings', 'linter_errors', 'linter_ok' ],
-      \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
+      \              [ 'gitbranch' ],
+      \              [ 'filetype' ] ],
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
       \ },
       \ 'component_expand': {
       \   'linter_warnings': 'LightlineLinterWarnings',
