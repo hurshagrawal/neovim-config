@@ -22,7 +22,7 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'hashivim/vim-terraform'
 Plug 'ekalinin/Dockerfile.vim'
-Plug 'zxqfl/tabnine-vim'
+"Plug 'zxqfl/tabnine-vim'
 
 Plug 'fatih/vim-go', { 'for': ['go', 'golang'] }
 
@@ -32,6 +32,10 @@ Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] }
 
 Plug 'leafgarland/typescript-vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
+
+Plug 'rust-lang/rust.vim'
+Plug 'elixir-editors/vim-elixir'
+Plug 'slashmili/alchemist.vim'
 
 " Initialize plugin system
 call plug#end()
@@ -125,12 +129,32 @@ map <C-m> :cn<CR>
 map <C-n> :cp<CR>
 
 " Splits
-map <C-\> :vsp<CR>
-map <C-]> :sp<CR>
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
+"move to the split in the direction shown, or create a new split
+nnoremap <silent> <C-h> :call WinMove('h')<cr>
+nnoremap <silent> <C-j> :call WinMove('j')<cr>
+nnoremap <silent> <C-k> :call WinMove('k')<cr>
+nnoremap <silent> <C-l> :call WinMove('l')<cr>
+
+function! WinMove(key)
+  let t:curwin = winnr()
+  exec "wincmd ".a:key
+  if (t:curwin == winnr())
+    if (match(a:key,'[jk]'))
+      wincmd v
+    else
+      wincmd s
+    endif
+    exec "wincmd ".a:key
+  endif
+endfunction
+
+"Tab to switch to next open buffer
+nnoremap <Tab> :bnext<cr>
+"Shift + Tab to switch to previous open buffer
+nnoremap <S-Tab> :bprevious<cr>
+"leader key twice to cycle between last two open buffers
+nnoremap <leader><leader> <c-^>
+
 set winwidth=80
 set winminwidth=20
 " We have to have a winheight bigger than we want to set winminheight. But if
@@ -291,6 +315,8 @@ let g:ale_sign_warning = '›'
 let g:ale_fixers = {
 \   'javascript': ['eslint', 'prettier'],
 \   'typescript': ['tslint', 'prettier'],
+\   'rust': ['rustfmt'],
+\   'elixir': ['mix_format'],
 \}
 
 let g:ale_javascript_prettier_use_local_config = 1
@@ -299,6 +325,9 @@ let g:ale_typescript_prettier_use_local_config = 1
 " Set this setting in vimrc if you want to fix files automatically on save.
 " This is off by default.
 let g:ale_fix_on_save = 1
+
+" Alchemist
+let g:alchemist_tag_disable = 1
 
 " Liteline Ale Support
 "
