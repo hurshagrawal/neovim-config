@@ -5,24 +5,25 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'icymind/NeoSolarized'
 Plug 'itchyny/lightline.vim'
-Plug 'w0rp/ale'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'digitaltoad/vim-pug'
 Plug 'mattn/emmet-vim'
 Plug 'ervandew/supertab'
-Plug 'nathanaelkane/vim-indent-guides'
 Plug 'mileszs/ack.vim'
 Plug 'vim-scripts/BufOnly.vim'
-Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+"Plug 'nathanaelkane/vim-indent-guides'
+"Plug 'easymotion/vim-easymotion'
+"Plug 'zxqfl/tabnine-vim'
+"
+Plug 'digitaltoad/vim-pug'
 Plug 'hashivim/vim-terraform'
 Plug 'ekalinin/Dockerfile.vim'
-"Plug 'zxqfl/tabnine-vim'
 
 Plug 'fatih/vim-go', { 'for': ['go', 'golang'] }
 
@@ -33,9 +34,10 @@ Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'leafgarland/typescript-vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
 
-Plug 'rust-lang/rust.vim'
-Plug 'elixir-editors/vim-elixir'
-Plug 'slashmili/alchemist.vim'
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+
+Plug 'elixir-editors/vim-elixir', { 'for': ['elixir'] }
+Plug 'slashmili/alchemist.vim', { 'for': ['elixir'] }
 
 " Initialize plugin system
 call plug#end()
@@ -78,16 +80,28 @@ vnoremap U y
 nnoremap <C-q> Q
 nnoremap Q q
 
-" Tabs
-nnoremap  <Leader>t :tabnew<CR>
-nnoremap  <Leader>h :tabprevious<CR>
-nnoremap  <Leader>l :tabnext<CR>
-
 " Copy to clipboard
 vnoremap  <Leader>y  "+y
 nnoremap  <Leader>Y  "+yg_
 nnoremap  <Leader>y  "+y
 nnoremap  <Leader>yy  "+yy
+
+" Yank list
+nnoremap <silent> <Leader>l :<C-u>CocList -A --normal yank<cr>
+
+nnoremap <silent> ∆ 10gj
+nnoremap <silent> ˚ 10gk
+
+" Turn off accidental lowercasing
+vnoremap u y
+vnoremap U y
+
+" Change ex-mode keybinding
+nnoremap <C-q> Q
+nnoremap Q q
+
+" Copy to clipboard
+vnoremap  <Leader>y  "+y
 
 " Paste from clipboard
 nnoremap <Leader>p "+p
@@ -122,15 +136,15 @@ nnoremap <silent> <C-y> ggyy<C-o>
 map <C-t> :NERDTreeToggle<CR>
 map <C-e> :NERDTreeFind<CR>
 
-map <C-a> :ALEDetail<CR>
-
 " Ack
 map <C-m> :cn<CR>
 map <C-n> :cp<CR>
 
 " Splits
 "move to the split in the direction shown, or create a new split
-nnoremap <silent> <C-h> :call WinMove('h')<cr>
+nnoremap <silent> <C-h> <C-w>h
+" For h, we don't want to create a new split since it's usually NERDTree
+" nnoremap <silent> <C-h> :call WinMove('h')<cr>
 nnoremap <silent> <C-j> :call WinMove('j')<cr>
 nnoremap <silent> <C-k> :call WinMove('k')<cr>
 nnoremap <silent> <C-l> :call WinMove('l')<cr>
@@ -307,81 +321,5 @@ let NERDTreeShowHidden=1
 " NERDCommenter
 let g:NERDSpaceDelims = 1
 
-" Ale
-let g:ale_completion_enabled = 1
-let g:ale_sign_error = '»'
-let g:ale_sign_warning = '›'
-
-let g:ale_fixers = {
-\   'javascript': ['eslint', 'prettier'],
-\   'typescript': ['tslint', 'prettier'],
-\   'rust': ['rustfmt'],
-\   'elixir': ['mix_format'],
-\}
-
-let g:ale_javascript_prettier_use_local_config = 1
-let g:ale_typescript_prettier_use_local_config = 1
-
-" Set this setting in vimrc if you want to fix files automatically on save.
-" This is off by default.
-let g:ale_fix_on_save = 1
-
 " Alchemist
 let g:alchemist_tag_disable = 1
-
-" Liteline Ale Support
-"
-" This is regular lightline configuration, we just added
-" 'linter_warnings', 'linter_errors' and 'linter_ok' to
-" the active right panel. Feel free to move it anywhere.
-" `component_expand' and `component_type' are required.
-"
-" For more info on how this works, see lightline documentation.
-let g:lightline = {
-      \ 'active': {
-      \   'right': [ [ 'lineinfo' ],
-      \              [ 'percent' ],
-      \              [ 'linter_warnings', 'linter_errors', 'linter_ok' ],
-      \              [ 'gitbranch' ],
-      \              [ 'filetype' ] ],
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ 'component_expand': {
-      \   'linter_warnings': 'LightlineLinterWarnings',
-      \   'linter_errors': 'LightlineLinterErrors',
-      \   'linter_ok': 'LightlineLinterOK'
-      \ },
-      \ 'component_type': {
-      \   'linter_warnings': 'warning',
-      \   'linter_errors': 'error',
-      \   'linter_ok': 'ok'
-      \ },
-      \ }
-
-autocmd User ALELint call lightline#update()
-
-" ale + liteline
-function! LightlineLinterWarnings() abort
-  let l:counts = ale#statusline#Count(bufnr(''))
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
-  return l:counts.total == 0 ? '' : printf('› %d', all_non_errors)
-endfunction
-
-function! LightlineLinterErrors() abort
-  let l:counts = ale#statusline#Count(bufnr(''))
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
-  return l:counts.total == 0 ? '' : printf('» %d', all_errors)
-endfunction
-
-function! LightlineLinterOK() abort
-  let l:counts = ale#statusline#Count(bufnr(''))
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
-  return l:counts.total == 0 ? '✓' : ''
-endfunction
