@@ -5,7 +5,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'icymind/NeoSolarized'
 Plug 'itchyny/lightline.vim'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
@@ -17,10 +17,14 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 
+Plug 'ngg/vim-gn'
+" Plug 'google/vim-maktaba'
+" Plug 'google/vim-codefmt'
+
 "Plug 'nathanaelkane/vim-indent-guides'
 "Plug 'easymotion/vim-easymotion'
 "Plug 'zxqfl/tabnine-vim'
-"
+
 Plug 'digitaltoad/vim-pug'
 Plug 'hashivim/vim-terraform'
 Plug 'ekalinin/Dockerfile.vim'
@@ -29,10 +33,14 @@ Plug 'fatih/vim-go', { 'for': ['go', 'golang'] }
 
 Plug 'othree/yajs.vim', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] }
 
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+
+" Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'leafgarland/typescript-vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'ianks/vim-tsx', { 'for': ['typescript', 'typescript.tsx'] }
+
+Plug 'jason0x43/vim-js-indent', { 'for': ['javascript', 'javascript.jsx', 'typescript', 'typescript.tsx'] }
 
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 
@@ -291,8 +299,7 @@ endif
 
 " FZF
 let $FZF_DEFAULT_COMMAND .= 'ag --hidden --ignore .git -g ""'
-map <c-p> :FZF<CR>
-nnoremap <Leader>o :FZF<CR>
+map <silent> <c-p> :FZF<CR>
 
 " - down / up / left / right
 let g:fzf_layout = { 'down': '~25%' }
@@ -325,14 +332,16 @@ let g:ale_sign_error = '»'
 let g:ale_sign_warning = '›'
 
 let g:ale_fixers = {
-\   'javascript': ['eslint', 'prettier'],
-\   'typescript': ['tslint', 'eslint', 'prettier'],
+\   'javascript': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
+\   'typescript': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
 \   'rust': ['rustfmt'],
 \   'elixir': ['mix_format'],
 \}
 
 let g:ale_javascript_prettier_use_local_config = 1
 let g:ale_typescript_prettier_use_local_config = 1
+let g:ale_javascript_eslint_use_global = 1
+let g:ale_javascript_eslint_executable = 'eslint_d'
 
 " Set this setting in vimrc if you want to fix files automatically on save.
 " This is off by default.
