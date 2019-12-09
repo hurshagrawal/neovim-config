@@ -322,6 +322,7 @@ let g:fzf_colors =
 " NERDTree
 let g:NERDTreeWinSize = 30
 let NERDTreeShowHidden=1
+let NERDTreeHijackNetrw=1
 
 " NERDCommenter
 let g:NERDSpaceDelims = 1
