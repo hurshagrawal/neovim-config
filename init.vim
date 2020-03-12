@@ -47,6 +47,10 @@ Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 Plug 'elixir-editors/vim-elixir', { 'for': ['elixir'] }
 Plug 'slashmili/alchemist.vim', { 'for': ['elixir'] }
 
+" Chromium / cpp
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'chromium/vim-codesearch'
+
 " Initialize plugin system
 call plug#end()
 
@@ -65,6 +69,8 @@ endif
 
 " Map the leader key to SPACE
 let mapleader = "\<Space>"
+
+set hidden
 
 " ---Key mappings---
 " Exit insert mode
@@ -337,12 +343,14 @@ let g:ale_fixers = {
 \   'typescript': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
 \   'rust': ['rustfmt'],
 \   'elixir': ['mix_format'],
+\   'cpp': ['clang-format'],
 \}
 
 let g:ale_javascript_prettier_use_local_config = 1
 let g:ale_typescript_prettier_use_local_config = 1
 let g:ale_javascript_eslint_use_global = 1
 let g:ale_javascript_eslint_executable = 'eslint_d'
+let g:ale_c_clangformat_executable = '/Users/hurshagrawal/workspace/chromium/src/buildtools/mac/clang-format'
 
 " Set this setting in vimrc if you want to fix files automatically on save.
 " This is off by default.
@@ -407,3 +415,6 @@ function! LightlineLinterOK() abort
   let l:all_non_errors = l:counts.total - l:all_errors
   return l:counts.total == 0 ? '✓' : ''
 endfunction
+
+" Chromium + C++
+so ~/workspace/chromium/src/tools/vim/filetypes.vim
